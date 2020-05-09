@@ -1,16 +1,5 @@
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import App from './app';
 
-const app = express();
+const app = new App([], 5000);
 
-app.use(bodyParser.json());
-
-app.get('', (req, res) => {
-  res.send('Hello from server');
-});
-
-const PORT = 5000;
-
-app.listen(PORT, () => {
-  console.log(`server started at port ${PORT}`);
-});
+app.listen();
