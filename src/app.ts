@@ -1,9 +1,9 @@
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
+import express, { Application } from 'express';
+import bodyParser from 'body-parser';
 import Controller from 'interfaces/controller.interface';
 
 export default class App {
-  public app: express.Application;
+  public app: Application;
   public port: number;
 
   constructor(controllers: Controller[], port: number) {
