@@ -1,17 +1,10 @@
 import express, { Request, Response, response } from 'express';
 import Recipe from './recipe.interface';
+import RecipeModel from './recipe.model';
 
 export default class RecipesController {
   public path = '/recipes';
   public router = express.Router();
-
-  private recipes: Recipe[] = [
-    {
-      author: 'John Homebrewer',
-      name: 'New England Ipa',
-      body: 'Lorem ipsum',
-    },
-  ];
 
   constructor() {
     this.initializeRoutes();
@@ -22,13 +15,15 @@ export default class RecipesController {
     this.router.post(this.path, this.createRecipe);
   }
 
-  getAllRecipes = (req: Request, res: Response) => {
-    response.send(this.recipes);
+  getAllRecipes = async (req: Request, res: Response) => {
+    const allRecipes = await RecipeModel.find().exec();
+    res.send(allRecipes);
   };
 
-  createRecipe = (req: Request, res: Response) => {
-    const recipe: Recipe = req.body;
-    this.recipes.push(recipe);
-    res.send(recipe);
+  createRecipe = async (req: Request, res: Response) => {
+    const recipeData: Recipe = req.body;
+    const createdRecipe = new RecipeModel(recipeData);
+    const savedPost = await createdRecipe.save();
+    res.send(savedPost);
   };
 }
