@@ -5,6 +5,6 @@ import validateEnv from './utils/validateEnv';
 
 validateEnv();
 
-const app = new App([new RecipesController()], 5000);
+const app = new App([new RecipesController()]);
 
 app.listen();

@@ -1,19 +1,26 @@
-import express, { Application } from 'express';
 import bodyParser from 'body-parser';
-import Controller from 'interfaces/controller.interface';
+import express, { Application } from 'express';
 import mongoose from 'mongoose';
+import Controller from './interfaces/controller.interface';
+import errorMiddleware from './middleware/error.middleware';
 
 export default class App {
   public app: Application;
-  public port: number;
 
-  constructor(controllers: Controller[], port: number) {
+  constructor(controllers: Controller[]) {
     this.app = express();
-    this.port = port;
 
+    this.connectToDB();
     this.initializeMiddlewares();
     this.initializeControllers(controllers);
-    this.connectToDB();
+    this.initializeErrorHandling();
+  }
+
+  private connectToDB() {
+    mongoose.connect(process.env.MONGODB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   }
 
   private initializeMiddlewares() {
@@ -26,16 +33,13 @@ export default class App {
     });
   }
 
-  private connectToDB() {
-    mongoose.connect(process.env.MONGODB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+  private initializeErrorHandling() {
+    this.app.use(errorMiddleware);
   }
 
   public listen() {
-    this.app.listen(this.port, () => {
-      console.log(`server started at port ${this.port}`);
+    this.app.listen(process.env.PORT, () => {
+      console.log(`server started at port ${process.env.PORT}`);
     });
   }
 }
