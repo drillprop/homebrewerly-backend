@@ -1,6 +1,7 @@
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import Controller from 'interfaces/controller.interface';
+import mongoose from 'mongoose';
 
 export default class App {
   public app: Application;
@@ -12,6 +13,7 @@ export default class App {
 
     this.initializeMiddlewares();
     this.initializeControllers(controllers);
+    this.connectToDB();
   }
 
   private initializeMiddlewares() {
@@ -21,6 +23,13 @@ export default class App {
   private initializeControllers(controllers: Controller[]) {
     controllers.forEach((controller) => {
       this.app.use('/', controller.router);
+    });
+  }
+
+  private connectToDB() {
+    mongoose.connect(process.env.MONGODB_URL, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
   }
 
