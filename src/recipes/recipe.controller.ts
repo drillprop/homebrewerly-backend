@@ -1,7 +1,8 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import Recipe from './recipe.interface';
 import RecipeModel from './recipe.model';
 import Controller from '../interfaces/controller.interface';
+import RecipeNotFoundException from '../exceptions/RecipeNotFoundException';
 
 export default class RecipesController implements Controller {
   public path = '/recipes';
@@ -25,10 +26,18 @@ export default class RecipesController implements Controller {
     res.send(allRecipes);
   };
 
-  private getRecipeById = async (req: Request, res: Response) => {
+  private getRecipeById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const id = req.params.id;
     const recipe = await this.recipe.findById(id).exec();
-    res.send(recipe);
+    if (recipe) {
+      res.send(recipe);
+    } else {
+      next(new RecipeNotFoundException(id));
+    }
   };
 
   private createRecipe = async (req: Request, res: Response) => {
@@ -38,7 +47,11 @@ export default class RecipesController implements Controller {
     res.send(savedPost);
   };
 
-  private modifyRecipe = async (req: Request, res: Response) => {
+  private modifyRecipe = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const id = req.params.id;
     const newRecipeData: Recipe = req.body;
     const recipe = await this.recipe
@@ -46,16 +59,24 @@ export default class RecipesController implements Controller {
         new: true,
       })
       .exec();
-    res.send(recipe);
+    if (recipe) {
+      res.send(recipe);
+    } else {
+      next(new RecipeNotFoundException(id));
+    }
   };
 
-  private deleteRecipe = async (req: Request, res: Response) => {
+  private deleteRecipe = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const id = req.params.id;
     const deleteResponse = await this.recipe.findByIdAndDelete(id).exec();
     if (deleteResponse) {
       res.sendStatus(200);
     } else {
-      res.sendStatus(404);
+      next(new RecipeNotFoundException(id));
     }
   };
 }
