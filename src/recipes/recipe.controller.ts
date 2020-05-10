@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import Recipe from './recipe.interface';
 import RecipeModel from './recipe.model';
-import Controller from 'interfaces/controller.interface';
+import Controller from '../interfaces/controller.interface';
 
 export default class RecipesController implements Controller {
   public path = '/recipes';
