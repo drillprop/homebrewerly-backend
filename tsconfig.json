@@ -3,7 +3,6 @@
     "sourceMap": true,
     "target": "es2017",
     "outDir": "./dist",
-    "baseUrl": "./src",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -11,7 +10,9 @@
     "strictPropertyInitialization": false,
     "noImplicitThis": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node"
   },
   "exclude": ["node_modules"]
 }
