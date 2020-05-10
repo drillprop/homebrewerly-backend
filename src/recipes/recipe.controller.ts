@@ -12,7 +12,7 @@ export default class RecipesController implements Controller {
     this.initializeRoutes();
   }
 
-  public initializeRoutes() {
+  private initializeRoutes() {
     this.router.get(this.path, this.getAllRecipes);
     this.router.get(`${this.path}/:id`, this.getRecipeById);
     this.router.post(this.path, this.createRecipe);
