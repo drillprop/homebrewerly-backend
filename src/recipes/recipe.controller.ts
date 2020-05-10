@@ -1,8 +1,10 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
+import RecipeNotFoundException from '../exceptions/RecipeNotFoundException';
+import Controller from '../interfaces/controller.interface';
+import validationMiddleware from '../middleware/validation.middleware';
 import Recipe from './recipe.interface';
 import RecipeModel from './recipe.model';
-import Controller from '../interfaces/controller.interface';
-import RecipeNotFoundException from '../exceptions/RecipeNotFoundException';
+import CreateRecipeValidator from './recipe.validator';
 
 export default class RecipesController implements Controller {
   public path = '/recipes';
@@ -16,8 +18,16 @@ export default class RecipesController implements Controller {
   private initializeRoutes() {
     this.router.get(this.path, this.getAllRecipes);
     this.router.get(`${this.path}/:id`, this.getRecipeById);
-    this.router.post(this.path, this.createRecipe);
-    this.router.patch(`${this.path}/:id`, this.modifyRecipe);
+    this.router.post(
+      this.path,
+      validationMiddleware(CreateRecipeValidator),
+      this.createRecipe
+    );
+    this.router.patch(
+      `${this.path}/:id`,
+      validationMiddleware(CreateRecipeValidator, true),
+      this.modifyRecipe
+    );
     this.router.delete(`${this.path}/:id`, this.deleteRecipe);
   }
 
