@@ -15,8 +15,9 @@ export default class RecipesController implements Controller {
   public initializeRoutes() {
     this.router.get(this.path, this.getAllRecipes);
     this.router.get(`${this.path}/:id`, this.getRecipeById);
-    this.router.patch(`${this.path}/:id`, this.modifyRecipe);
     this.router.post(this.path, this.createRecipe);
+    this.router.patch(`${this.path}/:id`, this.modifyRecipe);
+    this.router.delete(`${this.path}/:id`, this.deleteRecipe);
   }
 
   private getAllRecipes = async (req: Request, res: Response) => {
@@ -30,6 +31,13 @@ export default class RecipesController implements Controller {
     res.send(recipe);
   };
 
+  private createRecipe = async (req: Request, res: Response) => {
+    const recipeData: Recipe = req.body;
+    const createdRecipe = new this.recipe(recipeData);
+    const savedPost = await createdRecipe.save();
+    res.send(savedPost);
+  };
+
   private modifyRecipe = async (req: Request, res: Response) => {
     const id = req.params.id;
     const newRecipeData: Recipe = req.body;
@@ -41,10 +49,13 @@ export default class RecipesController implements Controller {
     res.send(recipe);
   };
 
-  private createRecipe = async (req: Request, res: Response) => {
-    const recipeData: Recipe = req.body;
-    const createdRecipe = new this.recipe(recipeData);
-    const savedPost = await createdRecipe.save();
-    res.send(savedPost);
+  private deleteRecipe = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const deleteResponse = await this.recipe.findByIdAndDelete(id).exec();
+    if (deleteResponse) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(404);
+    }
   };
 }
