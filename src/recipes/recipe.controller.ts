@@ -18,18 +18,18 @@ export default class RecipesController implements Controller {
     this.router.post(this.path, this.createRecipe);
   }
 
-  getAllRecipes = async (req: Request, res: Response) => {
+  private getAllRecipes = async (req: Request, res: Response) => {
     const allRecipes = await this.recipe.find().exec();
     res.send(allRecipes);
   };
 
-  getRecipeById = async (req: Request, res: Response) => {
+  private getRecipeById = async (req: Request, res: Response) => {
     const id = req.params.id;
     const recipe = await this.recipe.findById(id).exec();
     res.send(recipe);
   };
 
-  createRecipe = async (req: Request, res: Response) => {
+  private createRecipe = async (req: Request, res: Response) => {
     const recipeData: Recipe = req.body;
     const createdRecipe = new this.recipe(recipeData);
     const savedPost = await createdRecipe.save();
