@@ -15,6 +15,7 @@ export default class RecipesController implements Controller {
   public initializeRoutes() {
     this.router.get(this.path, this.getAllRecipes);
     this.router.get(`${this.path}/:id`, this.getRecipeById);
+    this.router.patch(`${this.path}/:id`, this.modifyRecipe);
     this.router.post(this.path, this.createRecipe);
   }
 
@@ -26,6 +27,17 @@ export default class RecipesController implements Controller {
   private getRecipeById = async (req: Request, res: Response) => {
     const id = req.params.id;
     const recipe = await this.recipe.findById(id).exec();
+    res.send(recipe);
+  };
+
+  private modifyRecipe = async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const newRecipeData: Recipe = req.body;
+    const recipe = await this.recipe
+      .findByIdAndUpdate(id, newRecipeData, {
+        new: true,
+      })
+      .exec();
     res.send(recipe);
   };
 
